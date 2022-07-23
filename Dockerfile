@@ -1,8 +1,8 @@
-FROM alpine
-ENV REPO_URL https://example.git
-ENV OUTPUT_DIR /html
+FROM henritel/git-blog:v0.0 AS builder
 
-RUN apk --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community add git gomplate cmark
+COPY . /blog
+RUN git-blog
 
-COPY main.sh /
-CMD ["/main.sh"]
+FROM nginx:1.23-alpine
+COPY media /usr/share/nginx/html/media/
+COPY --from=builder /out/blog/ /usr/share/nginx/html
