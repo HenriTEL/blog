@@ -1,4 +1,4 @@
-FROM henritel/git-blog:v0.0 AS builder
+FROM henritel/git-blog:v0.1 AS builder
 
 COPY . /blog
 RUN /bin/git-blog
