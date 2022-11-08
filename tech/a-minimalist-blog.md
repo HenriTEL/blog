@@ -1,6 +1,6 @@
-# A minimalist blog
+# The 4 levels of blogging
 
-**TL;DR** GitHub has a very nice interface to write MarkDown files. So I made a script to regularly translate that into HTML and voilà, here is my nice little blog.
+**TL;DR** I just spend a few days developping 
 
 After reading so many good posts from my peers and having a few nice small projects in mind, I felt is was time for me to do it. I wanted to share my point of view, to give back, to start my own blog. But I had my opinion on this, of course. As a developer there were some obvious: Markdown for pleasant formatting, git to keep stuff well organized and backed-up. But I also wanted to stay in complete control and keep things simple and efficient. Which means having it selfhosted under my own domain. No SaaS, no cloud, no fancy framework. Hey you know what? While we are at it, no cutom font, no cookies, no dynamic rendering, no Javascript, not even HTML attributes. Back to the basics. Just semantic HTML and CSS, provided by the most boring HTTP server.
 
