@@ -6,11 +6,10 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
       - uses: docker://henritel/gitblog2
         with:
           args: post-css cloudflare-pages
         env:
-          SOURCE_REPO: /github/workspace
+          SOURCE_REPO: https://github.com/${{ github.repository }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
