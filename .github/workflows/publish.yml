@@ -1,9 +1,9 @@
-name: Publish
+name: Publish Blog
 on:
   push:
     branches: [ main ]
 jobs:
-  container-test-job:
+  build-and-publish:
     runs-on: ubuntu-latest
     steps:
       - name: Build and upload to cloudflare pages
@@ -11,6 +11,6 @@ jobs:
         with:
           args: post-css cloudflare-pages
         env:
-          REPO_URL: https://github.com/HenriTEL/blog.git
+          SOURCE_REPO: https://github.com/HenriTEL/blog.git
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
