@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Build and upload to cloudflare pages
-        uses: docker://henritel/git-blog
+        uses: docker://henritel/gitblog2
         with:
           args: post-css cloudflare-pages
         env:
