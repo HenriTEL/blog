@@ -1,6 +1,6 @@
-# [GitBlog2](https://github.com/HenriTEL/gitblog2), my minimalist blog generator
+# GitBlog2, my minimalist blog generator
 
-> How I spent weekends developping a blogging platform instead of actually starting a blog.
+> How I spent weekends developping a blog generator instead of actually starting a blog.
 
 ![Rabbit holing](/media/rabbit-hole.jpg "Down a rabbit hole")
 
@@ -27,5 +27,5 @@ But not everything is rainbows and butterflies, there's a few thing that are not
 * Your post's description, *aka* summary must be a citation that just follows the title
 * Your images, videos, audio, etc. goes in `media/`
 
-And that's it, now you can have a blog for free while only focusing on writing its actual content.  
-Feel free to use it for yourself, feedback is welcome!
+And that's it, now you can setup a blog for free and focus on writing its actual content.  
+Feel free to use [GitBlog2](https://github.com/HenriTEL/gitblog2) for yourself, feedback is welcome!
