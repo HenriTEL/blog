@@ -1,8 +1,6 @@
 # Migration gaps and how to prevent them
 
-> I recently went through the migation process for 2 different services at Meta and we missed some dependencies both times.
-> In this post I'll explain what went wrong and provide general guidelines to prevent this kind of issue the next time.
-> In short, it's crutial to measure usage of a given service and use that to validate that there is no remaining integrations.
+> I recently went through the migation process for 2 different services at Meta and we missed some dependencies both times. In this post I'll explain what went wrong and provide general guidelines to prevent this kind of issue the next time. In short, it's crutial to measure usage of a given service and use that to validate that there is no remaining integrations.
 
 ## The object storage's forgotten customers
 
