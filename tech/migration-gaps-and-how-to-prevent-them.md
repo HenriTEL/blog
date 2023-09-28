@@ -9,7 +9,6 @@ I recently went through the migration of 2 diffenrent services at Meta and both 
 ![Migration diagram](/media/obj-store-migration.svg "Object store migration diagram")  
 
 The first migration was of one object storage to another (some s3 equivalent).
-Most users went throught a frontend app that made calls to the object store internally but we also had some internal users with cron jobs that integrted directly with the object store.
 A few hours of downtime was acceptable for the time of the migration but once it was complete for a given user, everything had to work as usual for him.
 Most users connected to the service via a dedicated app frontend that we had full concrol on, but we also had some legacy processes that interracted directly with the object store.
 
