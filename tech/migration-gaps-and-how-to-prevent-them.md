@@ -6,7 +6,7 @@ I recently went through the migration of 2 diffenrent services at Meta and both 
 
 ## The object storage's forgotten customers
 
-![Migration diagram](/media/obj-stor-migration.svg "Object store migration diagram")  
+![Migration diagram](/media/obj-store-migration.svg "Object store migration diagram")  
 
 The first migration was of one object storage to another (some s3 equivalent).
 Most users went throught a frontend app that made calls to the object store internally but we also had some internal users with cron jobs that integrted directly with the object store.
