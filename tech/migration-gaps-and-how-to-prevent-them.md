@@ -1,41 +1,50 @@
 # Migration gaps and how to prevent them
 
-> I recently went through the migation process for 2 different services at Meta and we missed some dependencies both times. In this post I'll explain what went wrong and provide general guidelines to prevent this kind of issue the next time. In short, monitor usage to make sure that there is no remaining integrations.
+> A retrospective on 2 migrations that went a bit wrong.
+
+I recently went through the migration of 2 diffenrent services at Meta and both time we had a few issues. In this post I'll briefly explain what was being migrated and what went wrong. Then I'll give advices to prevent them in the future. Let's go!
 
 ## The object storage's forgotten customers
 
-Our first migration that went partially wrong concerns the migration of one object storage technology to another (some s3 equivalent).
-We had hundreds of different customers that uploaded files to their workspace using a frontend (with its own API) that made calls to this storage backend internally and only a dozen that had direct integrations.
-A few hours of downtime was acceptable for the time of the migration and the traffic was not huge, so we came up with a migration process quite easily.
-We setup a logical switch on each request based on the workspace location with some additionnal metadata.
-If the workspace is marked as migrated it goes to the new storage, otherwise fallback to the old one.
-The actual migration of each workspace is done in a few steps.
-First we copy each object to the new backend.
-Then we disable writes to the old backend and do some kind of rsync to resolve differencies between the start and the end of the copy.
-Finally, we set the migration flag.
-Now this solution only works for customers that use the dedicated frontend, because the switch logic is made at that level.
-Customers that interract with the storage backend directly have no clue about their workspace being migrated.
-At some point it becomes read-only and if they continue to use the storage API directly instead of the frontend, their script breaks.
-So we looked for such direct integrations in the codebase, found the correspondings customers and asked them to migrate.
-Our search wasn't perfect and we missed some customers, leading to some emergency migration rollbacks.
+![Migration diagram](/media/obj-stor-migration.svg "Object store migration diagram")  
+
+The first migration was of one object storage to another (some s3 equivalent).
+Most users went throught a frontend app that made calls to the object store internally but we also had some internal users with cron jobs that integrted directly with the object store.
+A few hours of downtime was acceptable for the time of the migration but once it was complete for a given user, everything had to work as usual for him.
+Most users connected to the service via a dedicated app frontend that we had full concrol on, but we also had some legacy processes that interracted directly with the object store.
+
+To avoid disruptions, we needed to identify those direct integrations early and ask their corresponding owners to connect to the app frontend instead. Only once their processes are updated could we proceed to migrate them to the new storage.
+So we looked for such direct integrations in the codebase, found the correspondings owners and asked them to update.
+Our search wasn't perfect and we missed some cases, leading to some emergency migration rollbacks.
 
 ## The metrics daemon that had a nickname
 
 In this second migration experience I was on the consumer side.
 The daemon that aggregate metrics on our hosts was being migrated to another, more standard one.
-Easy, let's grep into the codebase to find our where we import the old library, replace with calls to the new one and voilà.
-Again, our search wasn't perfect and we missed a portion of one application that stopped sending metrics at some point.
-It turns out that the daemon being migrated supported different protocols for metrics and one of our integrations used one of those, therefore another library.
+Easy, I thought. We just need to grep into the codebase to find where we import the old library, replace it with the new one and we're done!
+Again, our search wasn't perfect and a few metrics stopped working at some point.
+It turns out that the daemon being migrated supported different protocols for metrics so you could interract with it using different libraries. We used one of those other libraries.
+
+<details>
+  <summary>ⓘ A note on why manually disabling the old daemon did not flag the issue</summary>
+  The nasty part is that we only discovered it later after manually checking our dashboard because our alerting was based on values reaching some threshold but when the value is missing entirely, it did not evaluate at all! A classic.
+  So, relying on the good configuration of alerting or checking dashboards manually is not a good solution. It's something you should definitely do as a verification step but the more metrics you have, the more likely you are to miss some.
+</details>
 
 
 ## Retrospective
 
-There's some kind of a pattern here. Each time we rely on manual checks to determine dependencies to the system being migrated and assume that those checks are flawless.
-But they are not, we've seen 2 different cases that led to missed integrations, and there's many more.
-Doing such out of the blue search for dependencies for the purpose of deprecation should be a red flag.
-Instead we should measure usage of a given service and use that to look for remaining integrations.
+There's a pattern here. Each time we rely on code discovery to enumerate dependencies and assume that it is good enough to cover integration to the system to deprecate.
+They are not. Those queries toward the codebase will miss use cases proportionally to the size of the codebase and the number of customers. Just think about code hidden elsewhere, for example in a container registry or a package repository.
+My take is that relying on such manual code search for the purpose of deprecation should be a red flag.
+We should do those manual searches but as a secondary verification step, not as the source of truth.
+
+What should de done instead is to measure usage of the service to deprecate, in real time if possible.
 It's the only reliable way to make sure that such service can be decomissionned and that the migration is complete.
-Of course we can still miss some integrations if their corresponding service calls are made out of the window we used to gather usage data.
-But probably such metrics already exists and cover a large enough time window.
-If not your priority should be to start collecting such information ASAP.
-Finally, if you still miss some use case it mean that they used the service very infrequently (not in 3 months maybe) so probably they are probably not so critical.
+In our first migration case it means investing time to trace the origin of requests received by the old object store, so that we can distinguish the one that come from the frontend from those that come from elsewhere.
+In the second migration we should have kept track of the metrics received by the old daemon.
+
+One can argue that we can still miss cases if their corresponding service calls are made out of the window we used to track usage.
+First it's important to note that your service is already being monitored and you have the metrics already. What you might need to do is find the right query or join data points with another table, but it's likely that you already cover a large enough time window.
+If not you should start collecting such metrics ASAP.
+If you still miss some use case it mean that those usage were not frequent enough to be detected it's likely that they are not so critical and can be delayed for the time of their update.
