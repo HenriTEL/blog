@@ -1,64 +1,84 @@
-# Eng Failures & Mitigations
+# Awkward Software Engineering Failures And How To Prevent Them
 
-> This is my attempt to make a list of principles that can prevent some of the most spectacular softwate engineering failures.
-> It's based on a [Hacker News thread](https://news.ycombinator.com/item?id=38452959) thread where a lot of people provided their own horror stories.
-> I try to provide concrete examples of failures and their solutions as much as possible to illustrate the general principles.
-> I'll probably extend an reorganize it in the future.
+> Testimonials of some of the most awkward Engineering failures and general principles to avoid them.
+
+This post is based on a [Hacker News thread](https://news.ycombinator.com/item?id=38452959) where a lot of people provided their own horror stories.
+I try to provide concrete examples of failures and corresponding solutions as much as possible to illustrate the general principles.
+I'll probably extend an reorganize it in the future.
 
 [TOC]
 
 ## General advices
 
-* **Minimize the number of manual steps** when interacting with sensitive systems. Humans make mistakes, for example in the [Gimli Glider](https://en.wikipedia.org/wiki/Gimli_Glider#Miscalculation_during_fueling) story, 2 technicians, the First Officer and the Captain all failed to correctly calculate the amount of fuel required for the flight.
-* **Warn the user about potentially dangerous actions**, for example when deploying a version that did not pass all tests. By default apt asks for confirmation before installing or removing packages.
-* **Build things that are safe by default**.
+**Minimize the number of manual steps** when interacting with sensitive systems. Humans make mistakes, for example in the [Gimli Glider](https://en.wikipedia.org/wiki/Gimli_Glider#Miscalculation_during_fueling) story, among other mistakes, 2 technicians, the First Officer and the Captain all failed to correctly calculate the amount of fuel required for the flight. Automation does not prevent you from conducting manual verifications still, especially when you push non-trivial changes or modify said automation.  
+
+**Warn the user about potentially dangerous actions**, for example when deploying a version that did not pass all tests. By default apt asks for confirmation before installing or removing packages.  
+
+**Build things that are safe by default**.
   - Avoid code that executes dangerously by default, e.g. a script that drops tables or connects to prod by default).
   - Args are frequently mixed-up so use cli options over raw arguments as much as possible. Also be careful with short options, people might expect -r to run the operation recursively, not to be the short version of --remove.
-  - Leverage typing where available, [Parse, don’t validate](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/).
-* Developers love to poke around and explore tools by running them without losing too much time reading documentation or code. That’s one reason why you should build tools that are safe by default but also to **place safeguards that prevent unintentional bad situations**. For example by denying access to tables containing personal user data by default, so that developers don’t create privacy incidents by mistake.
-* **Deny by default and use allow lists**. This one comes from the security domain but can be applied to many other things.
-For example, have groups with associated allowed commands, the finer grain the better, that way an account might only be able to delete some rows but not entire tables.
-* Design systems such that they **cannot be plugged incorrectly**. For example by adding a mandatory `_prod` suffix to all prod databases. Example: Hoover_nozzle_and_Hoover_ring
-* **Fail early to avoid  inconsistent states**. This can happen when you run commands in sequence and some of them succeed while others fail. Figure-out dependencies and make sure that the script returns on the first unexpected error.
-* Apply **Least privilege principle**. This one is related to the Deny by default point.
+  - Leverage typing where available, [Parse, don’t validate](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/).  
+
+Developers love to poke around and explore tools by running them without losing too much time reading documentation or code. That’s one reason why you should build tools that are safe by default but also to **place safeguards that prevent unintentional bad situations**. For example by denying access to tables containing personal user data by default, so that developers don’t create privacy incidents by mistake.  
+
+**Deny by default and use allow lists**. This one comes from the security domain but can be applied to many other things.
+For example, have groups with associated allowed commands, the finer grain the better, that way an account might only be able to delete some rows but not entire tables.  
+
+Design systems such that they **cannot be plugged incorrectly**. For example by adding a mandatory `_prod` suffix to all prod databases. Example: Hoover_nozzle_and_Hoover_ring. 
+
+**Fail early to avoid  inconsistent states**. This can happen when you run commands in sequence and some of them succeed while others fail. Figure-out dependencies and make sure that the script returns on the first unexpected error.  
+
+Apply **Least privilege principle**. This one is related to the Deny by default point.
   - Separate read and write operations, provide read-only credentials for read-only operations.
   - Limit access to only the resources that need to be touched, e.g. only one directory instead of the whole filesystem.
   - Don’t give prod accesses to those who don’t need to.
-  - Make credentials expire for users that need to interact directly with critical systems. If you need to routinely perform manual maintenance operations you’re probably doing it wrong. Reduce toil with automation.
-* **Defense in depth**. Don’t assume that your first line of defense is impenetrable. The story of the [qantas flight 32](https://admiralcloudberg.medium.com/a-matter-of-millimeters-the-story-of-qantas-flight-32-bdaa62dc98e7) that was able to land successfully despite a spectacular failure of one of the engines says a lot about how far thins principle can go. Fragments of the IP turbine disk passed through the wing and belly of the A380 causing the malfunctions of dozens of critical systems. Software Engineering examples include:
-  - Checking the environment at the beginning of the script in addition to running it with a service account with minimal privileges.
-* **Don’t leave dangerous operations / code in the wild**. If it modifies a critical system it probably deserves proper documentation and official tooling.
+  - Make credentials expire for users that need to interact directly with critical systems. If you need to routinely perform manual maintenance operations you’re probably doing it wrong. Reduce toil with automation.  
+
+**Defense in depth**. Don’t assume that your first line of defense is impenetrable. The story of the [qantas flight 32](https://admiralcloudberg.medium.com/a-matter-of-millimeters-the-story-of-qantas-flight-32-bdaa62dc98e7) says a lot about how far this principle can go. Fragments of one of the IP turbine disk passed through the wing and belly of the A380 causing the malfunctions of dozens of critical systems. The plane landed successfully nonetheless. Software Engineering examples include:
+  - Checking the environment at the beginning of the script in addition to running it with a service account with minimal privileges.  
+
+**Don’t leave dangerous operations / code in the wild**. If it modifies a critical system it probably deserves proper documentation and official tooling.
   - It can be a harmful command line sequence that you left on your personal wiki page that is accessible to everybody. People will find it and copy-paste it when you’re away.
   - It can also be this script that you wrote for yourself in your /home. People will run it when you’re away.
   - Or you will forget about the dangerous part and execute it in the future.
-* **Know your Single Points Of Failure**. It can be specific hosts or services, internal or external. Once the corresponding stakeholders are aware of those it’s easier to be extra-cautious when interacting on them or to try to remediate them.
-* **Setup quotas**, especially on resources that cost extra money. You don’t want to provision GCP instances in an infinite loop until your company goes out of money. If you’re an investment fund, you don’t want to send market orders in an infinite loop until your clients don’t have enough money to pay for the transaction fees.
-* **Setup monitoring and alerting**. You don’t want to hear the bad news from your users.
+
+**Know your Single Points Of Failure**. It can be specific hosts or services, internal or external. Once the corresponding stakeholders are aware of those it’s easier to be extra-cautious when interacting on them or to try to remediate them.  
+
+**Setup quotas**, especially on resources that cost extra money. You don’t want to provision GCP instances in an infinite loop until your company goes out of money. If you’re an investment fund, you don’t want to send market orders in an infinite loop until your clients don’t have enough money to pay for the transaction fees.  
+
+**Setup monitoring and alerting**. You don’t want to hear the bad news from your users.
   - Monitor resource usage (CPU, RAM, storage), predict exhaustion and alert BEFORE it happens, typically full storage.
   - Make sure that there is no SPOF in your monitoring and alerting stacks. The last thing you want is to become blind to the system's health.
-  - Be careful with alerting where the absence of data points usually does not trigger an alert, while it probably means that there is an outage. You need to use absent() when using prometheus for example. This default behavior is a million dollars mistake IMO.
-* **Fight the normalization of deviance**. Work quality can degrade quite fast and ad-hoc bumpy procedures have a tendency to stay. Some examples include getting used to: overtime, failing tests in the CI, doing the same process so often that you validate prompts without even reading them, simultaneously working with a dev and prod env.
-* Avoid interacting with critical systems on Friday evening. Also think about the worst case scenario and how long it would take to recover.
-* **Check your own state**. Many errors happen because people are tired, under too much pressure, in a hurry or have whatever other issue that makes them prone to mistakes.
+  - Be careful with alerting where the absence of data points usually does not trigger an alert, while it probably means that there is an outage. You need to use absent() when using prometheus for example. This default behavior is a million dollars mistake IMO.  
+
+**Fight the normalization of deviance**. Work quality can degrade quite fast and ad-hoc bumpy procedures have a tendency to stay. Some examples include getting used to: overtime, failing tests in the CI, doing the same process so often that you validate prompts without even reading them, simultaneously working with a dev and prod env.  
+
+**Avoid interacting with critical systems on Friday evening**. Also think about the worst case scenario and how long it would take to recover.  
+
+**Check your own state**. Many errors happen because people are tired, under too much pressure, in a hurry or have whatever other issue that makes them prone to mistakes.
   - It’s ok to ask for more time, discuss trade offs, ask for help or delegate to someone else. It’s also important to be honest and tell others that you simply don’t know how to fix something and fear that you might break it even more.
-  - SPOFs are not limited to computers but are often people, that’s an issue that must be tackled too. Typically being the only expert that knows how to solve issues with technology X, like how to fix nodes of a database cluster that are in a bad state.
-* **Don’t blame people**. Take those failures as opportunities to improve the robustness of your systems. Make sure that the whole team learns from those mistakes.
-* **Have a good understanding of what happened before trying to mitigate an issue**.
+  - SPOFs are not limited to computers but are often people, that’s an issue that must be tackled too. Typically being the only expert that knows how to solve issues with technology X, like how to fix nodes of a database cluster that are in a bad state.  
+
+**Don’t blame people**. Take those failures as opportunities to improve the robustness of your systems. Make sure that the whole team learns from those mistakes.  
+
+**Have a good understanding of what happened before trying to mitigate an issue**.
   - Write down the sequence of events with as many details as possible, e.g. who typed what command when.
   - Figure-out the scope of the issue, e.g. what features are not working and for which users.
   - Make sure to compare exact timestamps to understand how events are correlated.
-  - Make sure to gather all timestamps in the same time zone, e.g. UTC.
-* **Make sure your mitigation steps are safe**. For example you might want to rollback your application to a previous version, but that version might not be compatible with the current database scheme, because you changed a foreign key, moved a column in another table or whatever.
-* Once the issue is mitigated, make sure to well identify the root cause of the issue by conducting a proper post-mortem. Make sure to execute the follow-up tasks.
-* **Warn others**
+  - Make sure to gather all timestamps in the same time zone, e.g. UTC.  
+
+**Make sure your mitigation steps are safe**. For example you might want to rollback your application to a previous version, but that version might not be compatible with the current database scheme, because you changed a foreign key, moved a column in another table or whatever.  
+
+Once an issue is mitigated, make sure to well identify the root cause of the issue by conducting a proper post-mortem. Make sure to execute the follow-up tasks.  
+
+**Warn others**
   - Prior to performing sensitive operations, even when disruption should not be expected. If disruption is part of the worst case scenario, people in charge and potentially affected users should know.
-  - As soon as you understand your mistake. Bad news doesn’t get better with age.
-Be a team player by telling any interesting thing that you noticed and might be related. If you hide something unconventional that you did to avoid the blame, people will probably find out and you’ll lose their trust.
-* **Unplug the system yourself**. Test your system reliability yourself by voluntarily shutting down some parts. It’s the only way to be truly confident about the system’s robustness.
-* Run recovery for fake. It’s the only way to be confident during a real disaster recovery. You’ll also have a better sense of the cost in terms of time, resource and money to conduct such recovery.
-Backup offsite
+  - As soon as you understand your mistake. Bad news doesn’t get better with age.  
+Be a team player by telling any interesting thing that you noticed and might be related. If you hide something unconventional that you did to avoid the blame, people will probably find out and you’ll lose their trust.  
 
+**Unplug the system yourself**. Test your system reliability yourself by voluntarily shutting down some parts. It’s the only way to be truly confident about the system’s robustness.  
 
+Run recovery for fake. It’s the only way to be confident during a real disaster recovery. You’ll also have a better sense of the cost in terms of time, resource and money to conduct such recovery.  
 
 ## Wiping prod Database
 
