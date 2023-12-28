@@ -1,6 +1,6 @@
-# Awkward Software Engineering Failures And How To Prevent Them
+# Awful Software Engineering Failures And How To Prevent Them
 
-> Testimonials of some of the most awkward Engineering failures and general principles to avoid them.
+> Testimonials of some of the most awful Engineering failures and general principles to avoid them.
 
 This post is based on a [Hacker News thread](https://news.ycombinator.com/item?id=38452959) where a lot of people provided their own horror stories.
 I try to provide concrete examples of failures and corresponding solutions as much as possible to illustrate the general principles.
@@ -17,7 +17,7 @@ I'll probably extend an reorganize it in the future.
 **Build things that are safe by default**.
 
 * Avoid code that executes dangerously by default, e.g. a script that drops tables or connects to prod by default).
-* Args are frequently mixed-up so use cli options over raw arguments as much as possible. Also be careful with short options, people might expect -r to run the operation recursively, not to be the short version of --remove.
+* Args are frequently mixed-up so use cli options over raw arguments as much as possible. Also be careful with short options, people might expect `-r` to run the operation recursively, not to be the short version of `--remove`.
 * Leverage typing where available, [Parse, don’t validate](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/).  
 
 Developers love to poke around and explore tools by running them without losing too much time reading documentation or code. That’s one reason why you should build tools that are safe by default but also to **place safeguards that prevent unintentional bad situations**. For example by denying access to tables containing personal user data by default, so that developers don’t create privacy incidents by mistake.  
@@ -43,7 +43,7 @@ Apply **Least privilege principle**. This one is related to the Deny by default 
 **Don’t leave dangerous operations / code in the wild**. If it modifies a critical system it probably deserves proper documentation and official tooling.
 
 * It can be a harmful command line sequence that you left on your personal wiki page that is accessible to everybody. People will find it and copy-paste it when you’re away.
-* It can also be this script that you wrote for yourself in your /home. People will run it when you’re away.
+* It can also be this script that you wrote for yourself in your `/home`. People will run it when you’re away.
 * Or you will forget about the dangerous part and execute it in the future.
 
 **Know your Single Points Of Failure**. It can be specific hosts or services, internal or external. Once the corresponding stakeholders are aware of those it’s easier to be extra-cautious when interacting on them or to try to remediate them.  
@@ -117,11 +117,11 @@ If possible, run the following often and automatically. Make sure to also manual
 
 **Recover**
 
-* When core commands stop working, check /sbin
+* When core commands stop working, check `/sbin`
 * Try booting in rescue mode, check the system logs
 
 
 Other interesting stories you can lear from:
 
-* https://jameshaydon.github.io/nats-fail/
+* <https://jameshaydon.github.io/nats-fail/>
 
