@@ -16,7 +16,8 @@ Use for independant CPU bound tasks.
 **Cons:**
 
 - The synchronization points between tasks might not be obvious, leading to race conditions. They also make reasoning about the code exponentially more difficult.  
-- Processes are OS resources which mean not everything is under your control.  
+- Processes are OS resources which mean not everything is under your control.
+- You may or may not have access to a copy of global variables, depending on the start method. If you want to share those variable, you need to use specific data structures. You can also use other communication methods but they'll require serialization, which can be hard depending on the objects you want to share. Things are much easier with threads.
 - There is a significant memory and compute overhead to spawn and communicate between processes.
 
 ## AsyncIO
@@ -40,14 +41,15 @@ Use for I/O Bound tasks either:
 
 ## Multi Threading
 
-Use to run a few (<500) independant I/O bound tasks
+Use to run a few (<500) independant I/O bound tasks.
 
 **Pros:**
 
-- Spawning threads is cheap and predictible, since they share memory, communication is also cheap and easy, as long as you don't have race conditions.
+- Spawning threads is cheap and predictible, since they share memory, communication is also cheap and easy.
 
 **Cons:**
 
-- The synchronization points required between tasks might not be obvious and makes reasoning about the code exponentially more difficult.  
+- It's easy to introduce race conditions and difficult to spot them. Reasoning about the code exponentially more difficult.  
 - Threads are OS resources which mean not everything is under your control.
+- Due to the Global Interpreter Lock limitation, only one thread will execute code at a time, making this technique useless for CPU bound tasks. It will also be less efficient than async code, as the OS can stop a thread that was still busy and schedule another one, leading to more unnecessary context switches.
 
