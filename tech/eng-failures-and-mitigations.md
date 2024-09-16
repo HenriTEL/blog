@@ -13,15 +13,15 @@ I'll probably extend an reorganize it in the future. Keep in mind that following
 **Minimize the number of manual steps** Humans make mistakes, for example in the [Gimli Glider](https://en.wikipedia.org/wiki/Gimli_Glider#Miscalculation_during_fueling) story, 2 technicians, the First Officer and the Captain all failed to correctly calculate the amount of fuel required for the flight, causing the plane to take off with an half empty tank. Automation does not prevent you from conducting manual verifications still, especially when you push non-trivial changes or modify said automation.
 Did you test the script that checks if the CI ran tests? 🤡
 
-**Warn the user about potentially dangerous actions**, for example when deploying a version that did not pass all tests. Think about all the situations where you're being asked for confirmation.  
+**Warn the user about potentially dangerous actions**, for example when deploying a version that did not pass all tests. Think about situations where you've been asked for confirmation.  
 
 **Build things that are safe by default**.
 
-* Avoid code that executes dangerously by default, e.g. a script that does not check if the destination already exists before overwriting it.
-* Leverage typing where available, [Parse, don’t validate](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/).   
+* Avoid code that executes dangerously by default, e.g. a script that does not check if the destination already exists before overwriting it. Enabling them with an explicit `force` flag is ok.
+* Leverage typing where available, [Parse, don’t validate](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/). For example by making a `RoConnection` class that only execute queries toward read replicas of your db cluster.  
 
-**Deny by default and use allow lists**. This one comes from the security domain but can be applied to many other things.
-For example, have groups with associated allowed commands, the finer grain the better, that way an account might only be able to delete some rows but not entire tables.  
+**Deny/ignore by default and use allow lists**. This one comes from the security domain but can be applied to many other things.
+For example, if you want to apply something to a subset of users, it's much easier to know who gets affected by explicitly providing the list of those users than the list of all the other users that must be ignored.  
 
 Design systems such that they **cannot be plugged incorrectly**. For example by the use of named parameters over raw arguments as it can be easy to get the order of arguments wrong. Also be careful with short options, people might expect `-r` to run the operation recursively, not to be the short version of `--remove`.
 
