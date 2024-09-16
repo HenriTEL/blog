@@ -3,37 +3,36 @@
 > Testimonials of some of the most awful Engineering failures and general principles to avoid them.
 
 This post is based on a [Hacker News thread](https://news.ycombinator.com/item?id=38452959) where a lot of people provided their own horror stories.
-I try to provide concrete examples of failures and corresponding solutions as much as possible to illustrate the general principles.
-I'll probably extend an reorganize it in the future.
+I try to give concrete examples of failures and corresponding solutions as much as possible to illustrate the general principles.
+I'll probably extend an reorganize it in the future. Keep in mind that following is only relevant to important systems, i.e. the one that would put you in a bad situation if you mess them up. It'equally important to know where it's fine to move fast and break things, typically end user impact vs internal impact.
 
 [TOC]
 
 ## General advices
 
-**Minimize the number of manual steps** when interacting with sensitive systems. Humans make mistakes, for example in the [Gimli Glider](https://en.wikipedia.org/wiki/Gimli_Glider#Miscalculation_during_fueling) story, among other mistakes, 2 technicians, the First Officer and the Captain all failed to correctly calculate the amount of fuel required for the flight. Automation does not prevent you from conducting manual verifications still, especially when you push non-trivial changes or modify said automation.  
+**Minimize the number of manual steps** Humans make mistakes, for example in the [Gimli Glider](https://en.wikipedia.org/wiki/Gimli_Glider#Miscalculation_during_fueling) story, 2 technicians, the First Officer and the Captain all failed to correctly calculate the amount of fuel required for the flight, causing the plane to take off with an half empty tank. Automation does not prevent you from conducting manual verifications still, especially when you push non-trivial changes or modify said automation.
+Did you test the script that checks if the CI ran tests? 🤡
 
-**Warn the user about potentially dangerous actions**, for example when deploying a version that did not pass all tests. By default apt asks for confirmation before installing or removing packages.  
+**Warn the user about potentially dangerous actions**, for example when deploying a version that did not pass all tests. Think about all the situations where you're being asked for confirmation.  
 
 **Build things that are safe by default**.
 
-* Avoid code that executes dangerously by default, e.g. a script that drops tables or connects to prod by default).
-* Args are frequently mixed-up so use cli options over raw arguments as much as possible. Also be careful with short options, people might expect `-r` to run the operation recursively, not to be the short version of `--remove`.
-* Leverage typing where available, [Parse, don’t validate](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/).  
-
-Developers love to poke around and explore tools by running them without losing too much time reading documentation or code. That’s one reason why you should build tools that are safe by default but also to **place safeguards that prevent unintentional bad situations**. For example by denying access to tables containing personal user data by default, so that developers don’t create privacy incidents by mistake.  
+* Avoid code that executes dangerously by default, e.g. a script that does not check if the destination already exists before overwriting it.
+* Leverage typing where available, [Parse, don’t validate](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/).   
 
 **Deny by default and use allow lists**. This one comes from the security domain but can be applied to many other things.
 For example, have groups with associated allowed commands, the finer grain the better, that way an account might only be able to delete some rows but not entire tables.  
 
-Design systems such that they **cannot be plugged incorrectly**. For example by adding a mandatory `_prod` suffix to all prod databases. Example: Hoover_nozzle_and_Hoover_ring. 
+Design systems such that they **cannot be plugged incorrectly**. For example by the use of named parameters over raw arguments as it can be easy to get the order of arguments wrong. Also be careful with short options, people might expect `-r` to run the operation recursively, not to be the short version of `--remove`.
 
-**Fail early to avoid  inconsistent states**. This can happen when you run commands in sequence and some of them succeed while others fail. Figure-out dependencies and make sure that the script returns on the first unexpected error.  
+**Fail early to avoid inconsistent states**. This can happen when you run commands in sequence and some of them succeed while others fail. Figure-out dependencies and make sure that the script returns on the first unexpected error.
 
 Apply **Least privilege principle**. This one is related to the Deny by default point.
 
 * Separate read and write operations, provide read-only credentials for read-only operations.
 * Limit access to only the resources that need to be touched, e.g. only one directory instead of the whole filesystem.
 * Don’t give prod accesses to those who don’t need to.
+* Deny access to tables containing personal user data, so that developers don’t create privacy incidents by mistake.
 * Make credentials expire for users that need to interact directly with critical systems. If you need to routinely perform manual maintenance operations you’re probably doing it wrong. Reduce toil with automation.  
 
 **Defense in depth**. Don’t assume that your first line of defense is impenetrable. The story of the [qantas flight 32](https://admiralcloudberg.medium.com/a-matter-of-millimeters-the-story-of-qantas-flight-32-bdaa62dc98e7) says a lot about how far this principle can go. Fragments of one of the IP turbine disk passed through the wing and belly of the A380 causing the malfunctions of dozens of critical systems. The plane landed successfully nonetheless. Software Engineering examples include:  
@@ -103,7 +102,7 @@ Run recovery for fake. It’s the only way to be confident during a real disaste
 
 * Double check that you have backups in a good state (check recover section) before running important operations like a database migration.
 
-**Recover**
+**Recover**  
 If possible, run the following often and automatically. Make sure to also manually check that each step runs as expected at regular intervals.
 
 * Backup data.
