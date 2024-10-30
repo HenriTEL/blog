@@ -2,7 +2,7 @@
 
 > A list of unpopular things that are above their competition.
 
-[toc]
+[TOC]
 
 ## Items
 
