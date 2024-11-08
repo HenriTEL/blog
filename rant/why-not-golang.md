@@ -18,5 +18,5 @@ Those reasons were mostly found on this [HN thread](https://news.ycombinator.com
 
 > Newer versions of Java are much more enjoyable to work with versus Go.
 
-> Go's abstraction makes it simple to use but often those abstractions fall off when you leave the _typical server™_ environment go's creators had in mind when they designed the language.
-> For [example](https://fasterthanli.me/articles/i-want-off-mr-golangs-wild-ride) not every filesystem is Unix compliant and not every path is a string.
+Go's abstraction makes it simple to use but often those abstractions fall off when you leave the _typical server™_ environment go's creators had in mind when they designed the language.  
+For [example](https://fasterthanli.me/articles/i-want-off-mr-golangs-wild-ride) not every filesystem is Unix compliant and not every path is a string.
