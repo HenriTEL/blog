@@ -5,11 +5,11 @@
 
 ## Security is non-negotiable
 
-Let's face it: smartphones are the entry gate to our digital worlds. Emails, social networks, direct messages, ecommerce, photos and by extension proofs of identity. The list goes on. You have 2FA? Cool, that's also accessible from your smartphone. If someone gets user access to your smatphone, he really has root access to your life. Except for more hardenend apps like banking, he can suck all your digital life and lock you out of it, and that's not even the worst scenario.
+Let's face it: smartphones are the entry gate to our digital worlds. Emails, social networks, direct messages, fincances, photos and by extension proofs of identity. The list goes on. You have 2FA? Cool, that's also accessible from your smartphone. If someone gets user access to your smatphone, he really has root access to your life. Except for more hardenend apps like banking, he can suck all your digital life and lock you out of it, and that's not even the worst scenario.
 
 > Come on, you're not THAT important. Nobody cares enough for you to be threatened.
 
-You and I may not be very important nor have ennemies with enough motivation. But that's not the right question to ask. Instead, we should ask ourselves if there's anyone connected to the internet that can find value in ruining/syphoning our digital life (or threatening to). If the answer to this question is yes, then we and anybody that sharing the CVE is at risk.
+You and I may not be very important nor have ennemies with enough motivation. But that's not the right question to ask. Instead, we should ask ourselves if there's anyone connected to the internet that can find value in ruining/syphoning our digital life (or threatening to). If the answer to this question is yes, then we and anybody that sharing the CVE is at risk. But let's review that first sentence. What's no so unlikely to happen is that someone close to you becomes your ennemy. Your ex, your neighbor or whatever. That person may know the model of your phone and even has a way to communicate with it. Now if that person contacts an expert to hack you, it becomes much easier for them to find working attack vectors. Until those vectors are patched, well... You're fucked.
 
 > Such large scale attack never happened in the past and will never happen in the future. You're paranoid.
 
@@ -22,7 +22,7 @@ Given that the duration of security updates of devices is usually between 2 and 
 > But you can use custom ROMs to stay up-to-date
 
 That's not a real solution.
-* You need to be geek enough to start the adventure and it's hazardous.
+* You need to be nerd enough to start the adventure and it's hazardous.
 * You'll probably need to break security locks (e.g. unlock the bootloader and root your device), introducing new holes.
 * All apps that require those security locks will stop working.
 * It's likely that some things will stop working properly, like bluetooth, mobile network or the camera.
