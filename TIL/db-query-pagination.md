@@ -1,7 +1,7 @@
 # Implement Pagination
 
 **TL;DR** Return items in reverse chronological order, optionally give the ability to return in chronological order.  
-Provide previous and next page urls as [Header Links](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Link#pagination_through_links) using `ending_before` or `starting_after` some object ID.  
+Provide previous and next page urls as [Header Links](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Link#pagination_through_links) using `ending_before` or `starting_after` some object ID and use infinite scroll if possible.  
 
 ## Page Numbers: Expensive But That's OK
 
