@@ -5,17 +5,19 @@
 
 [TOC]
 
-My journey continues with this first version of a <abbr title="Pulse Width Modulation">PWM</abbr> controlled fan that triggers when humidity reached certain threshold.  
+My journey continues with this first version of a <abbr title="Pulse Width Modulation">PWM</abbr> controlled fan that triggers when humidity reach some threshold.  
 
 ## Connecting parts
-
 
 ![image](https://github.com/user-attachments/assets/ca43b867-d240-461c-9ccd-d64176a22680)
 
 I used the built-in STEMMA QT connectors for the SHT45 humidity sensor.  
 For the power, a 12v charger is connected to the 5v usb-c converter and the corresponding pins of the fan connector (yellow and black wires). I just soldered wires togethers and covered with electrical tape.  
-I'm using a noctua fan and despite the specs recommanding 5v for PWM control, the 3.3v GPIO output of the ESP32 works perfectly fine.  
-⚠️ It's important to keep the voltage for logic low below 0.8v tho, you just need to share the same ground for the different components for that, which is done by soldering the GND pin on the board.  
+I'm using a noctua fan and despite the specs recommanding 5v for PWM control, the 3.3v GPIO output of the ESP32 works perfectly. 
+
+> [!IMPORTANT]
+> The logic low must stay below 0.8v for PWM to work proreply. Make sure to share a common ground for the different components for that, notaly by soldering the GND pin on the board.
+  
 I'm not making use of the Tachometer output to get the actual fan speed, so the green wire is left disconnected.  
 
 
