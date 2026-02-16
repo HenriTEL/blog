@@ -12,6 +12,8 @@ int(True) is 1
 2 == 2.0
 True == 1.0
 isinstance(2.0, int)
+True and "str"
+True and ""
 ```
 
 <details>
@@ -25,5 +27,7 @@ isinstance(2.0, int)
     2 == 2.0 # True
     True == 1.0 # True
     isinstance(2.0, int) # False
+    True and "str" # "str"
+    True and "" # ""
   </pre>
 </details>
