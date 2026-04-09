@@ -1,6 +1,6 @@
 # I Recommend
 
-> A list of unpopular things that are above their competition.
+> Personal list of underrated things I own.
 
 [TOC]
 
