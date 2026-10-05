@@ -1,4 +1,4 @@
-## CI Done Right
+# CI Done Right
 
 * Write as much CI logic as possible in your own code. Does not really matter what you use as long as it is proper, maintainable code.
 * Make it possible to run your pipelines locally on a developer machine, as much as possible, otherwise testing/debugging becomes a nightmare.
