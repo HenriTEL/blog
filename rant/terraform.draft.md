@@ -33,4 +33,4 @@ Every time you change a module you need to initialize terraform again
 
 Can’t destroy security group -> that’s because it takes a long time for aws to allow the removal of the underlying eni (interfaces) -> still it should not recreate the security group
 
-Some features are only available in resources and not modules making things like ignoring changes for a specific value, typically the version number of a container a big pain.
+Some very powerful features are only available in resources and not modules notably the `lifecycle` setting making things like ignoring changes for a specific value, for example version numbers managed by the CI, a big pain.
